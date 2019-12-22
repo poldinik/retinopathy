@@ -56,7 +56,7 @@ I parametri configurabili sono:
 Il file config presenta una configurazione di default. Per eseguire la pipeline di apprendimento, spostarsi tramite terminale nella cartella del progetto ed eseguire in sequenza: 
 
 
-1) `python organizer.py` (obbligatorio, riorganizza il dataset per compatibilità di keras inserendo in una cartella "dataset" all'interno della cartella di output indicata nel config.json)
+1) `python organizer.py` (obbligatorio, riorganizza il dataset per compatibilità di keras spostandolo in una cartella "dataset" all'interno della cartella di output indicata nel config.json)
 2) `python augmentation.py` (opzionale, esegue un data augmentation sulle classi 1, 2, 3 per bilanciare la distribuzione dei samples. La classe 0 è la più numerosa"
 3) `python kfold.py` (opzionale, genera K fold)
 4) `python run.py` 
