@@ -66,4 +66,7 @@ N.B: per eseguire apprendimenti sulle k fold generate, è necessario il seguente
 
 `python run.py -f 2`
 
-dove in questo caso 2 è l'indice della fold. Per ogni fold deve essere eseguito il comando.
+dove in questo caso 2 è l'indice della fold. Per ogni fold deve essere eseguito il comando se si vogliono ottenere risultati cross validati
+Per eseguire un apprendimento senza cross validation è sufficiente `python run.py`.
+
+
