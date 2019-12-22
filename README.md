@@ -43,7 +43,7 @@ Attraverso il file `config.json` è possibile configurare la pipeline di apprend
 é necessario sostituire i valori dei parametri `dataset_dir`, `labels_path`, `output_dir` con percorsi opportuni. Di seguito sono riportate le descrizioni dei vari campi.
 I parametri configurabili sono:
 
-1) **dataset_dir**: directory che punta al dataset fornito da kaggle (**sostituire** con percorso valido)
+1) **dataset_dir**: directory che punta ai file del dataset fornito da kaggle (**sostituire** con percorso valido)
 2) **labels_path**: directory che punta al file csv delle labels (**sostituire** con percorso valido)
 3) **output_dir**: è una directory che raccoglie in output i risultati dell'apprendimento, ossia history di apprendimento, matrici di confusione, coefficienti di cohen...(**sostituire** con percorso valido)
 4) **model**: è il modello di rete. Possibili valori `standard` e `fine`.`standard` fornisce una implementazione di una rete neurali convoluzionale (file `cnn1.py`). Per modificare i layer del modello è necessario operare direttamente sul file. `fine` fornisce una implementazione tramite tecnica di fine tuning
