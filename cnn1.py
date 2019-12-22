@@ -160,7 +160,7 @@ def run(epoch, size, batch_size, data_path, results_path):
     df = pd.DataFrame(cnf_matrix)
     df.to_excel(final_dest + "/" + "cm" + ".xls")
 
-    metadata = [target_size[0], num_epochs]
+    metadata = [target_size[0], num_epochs, batch_size]
 
     df = pd.DataFrame(metadata)
     df.to_excel(final_dest + "/" + "metadata" + ".xls")

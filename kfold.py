@@ -97,7 +97,7 @@ with open('config.json') as json_data_file:
     config = json.load(json_data_file)
 
 output_dir = config["output_dir"]
-kfold = config["kfold"]
+kfold = config["fold"]
 
 kf = KFold(n_splits=kfold)
 
