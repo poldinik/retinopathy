@@ -32,7 +32,7 @@ Attraverso il file `config.json` è possibile configurare la pipeline di apprend
 	"labels_path": "/home/loretto/Desktop/labels.csv",
 	"output_dir": "/home/loretto/Desktop/output",
 	"model": "standard",
-	"epoch": 1,
+	"epoch": 10,
 	"size": 256,
 	"batch": 32,
 	"val_ratio": 20,
