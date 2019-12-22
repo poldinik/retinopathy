@@ -60,8 +60,8 @@ Il file config presenta una configurazione di default. Per eseguire la pipeline 
 
 
 1) `python organizer.py` (**obbligatorio**, riorganizza il dataset per compatibilità di keras spostandolo in una cartella "dataset" all'interno della cartella di **output** indicata nel config.json)
-2) `python augmentation.py` (opzionale, esegue un data augmentation sulle classi 1, 2, 3 per bilanciare la distribuzione dei samples. La classe 0 è la più numerosa"
-3) `python kfold.py` (opzionale, genera una cartella **kfold** con all'interno le varie fold per cross-validation)
+2) `python augmentation.py` (opzionale, esegue un data augmentation sulle classi 1, 2, 3 per bilanciare la distribuzione dei samples. La classe 0 è la più numerosa. Tale operazione potrebbe impiegare parecchi minuti causa impiego di operazioni su disco). 
+3) `python kfold.py` (opzionale, genera una cartella **kfold** con all'interno le varie fold per cross-validation, tale operazione potrebbe impiegare parecchi minuti causa utilizzo di operazioni su disco)
 4) `python run.py` (**obbligatorio**, lancia un apprendimento direttamente sul dataset senza cross validazione)
 
 
