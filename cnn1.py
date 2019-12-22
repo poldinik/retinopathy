@@ -104,7 +104,6 @@ def run(epoch, size, batch_size, data_path, results_path):
 
     plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
 
-    #toexcel(history, id_result + "_history")
     df = pd.DataFrame(history.history)
     df.to_excel(final_dest + "/" + "history.xls")
 
