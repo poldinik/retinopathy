@@ -51,7 +51,7 @@ I parametri configurabili sono:
 9) **kfold**: se eseguire con cross validation
 10) **fold**: numero fold per cross validation
 
-
+## 3. Esecuzione
 
 Il file config presenta una configurazione di default. Per eseguire la pipeline di apprendimento: 
 
