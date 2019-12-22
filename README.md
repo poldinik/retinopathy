@@ -56,7 +56,14 @@ I parametri configurabili sono:
 Il file config presenta una configurazione di default. Per eseguire la pipeline di apprendimento: 
 
 
-1) `python organizer.py`
-2) `python augmentation.py` (opzionale)
-3) `python kfold.py` (opzionale)
-4) `python run.py`
+1) `python organizer.py` (obbligatorio, riorganizza il dataset per compatibilità di keras inserendo in una cartella "dataset" all'interno della cartella di output indicata nel config.json)
+2) `python augmentation.py` (opzionale, esegue un data augmentation sulle classi 1, 2, 3 per bilanciare la distribuzione dei samples. La classe 0 è la più numerosa"
+3) `python kfold.py` (opzionale, genera K fold)
+4) `python run.py` 
+
+
+N.B: per eseguire apprendimenti sulle k fold generate, è necessario il seguente comando:
+
+`python run.py -f 2`
+
+dove in questo caso 2 è l'indice della fold. Per ogni fold deve essere eseguito il comando.
