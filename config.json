@@ -1,0 +1,12 @@
+{
+	"dataset_dir": "/Users/loretto/Downloads/diabetic-retinopathy-resized/resized_train/resized_train",
+	"labels_path": "/Users/loretto/Downloads/diabetic-retinopathy-resized/trainLabels_cropped.csv",
+	"output_dir": "/Users/loretto/Desktop/output",
+	"model": "standard",
+	"epoch": 10,
+	"size": 256,
+	"batch": 32,
+	"val_ratio": 20,
+	"kfold": false,
+	"fold": 3
+}
