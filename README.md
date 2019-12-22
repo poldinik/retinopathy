@@ -1,6 +1,6 @@
 # Reti Neurali Convoluzionali per riconoscimento di retinopatia diabetica all'interno di immagini di fundus oculi
 
-Il seguente codice implementa modelli di reti convoluzionali per il riconoscimento di un grado di retinopatia diabetica all'interno di immagini appartenenti al seguente dataset disponibile sul portale Kaggle: 
+Il seguente codice implementa modelli di reti convoluzionali per il riconoscimento di un grado di retinopatia diabetica all'interno di immagini appartenenti al seguente dataset disponibile sul portale Kaggle, attraverso tecniche di data augmentation e cross validazione: 
 
 https://www.kaggle.com/tanlikesmath/diabetic-retinopathy-resized
 
