@@ -73,4 +73,4 @@ dove in questo caso **2** è l'indice della fold. Per ogni fold deve essere eseg
 Per eseguire un apprendimento senza cross validation è sufficiente `python run.py`.
 
 
-Tutti i risultati degli apprendimenti vengono salvati nella cartella **retults**. Ogni risultato fornisce una immagine dei modello utilizzato, matrice di confusione sul test set, accuracy e loss function per training e validation set, alcuni meta parametri e coefficiente Kappa di Cohen per valutare la concordanza sul test set.
+Tutti i risultati degli apprendimenti vengono salvati nella cartella **results**. Ogni risultato fornisce una immagine dei modello utilizzato, matrice di confusione sul test set, accuracy e loss function per training e validation set, alcuni meta parametri e coefficiente Kappa di Cohen per valutare la concordanza sul test set.
