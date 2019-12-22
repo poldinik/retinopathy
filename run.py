@@ -31,7 +31,7 @@ if(kfold):
 
 else:
     print("Esecuzione senza kfold")
-    # if(model == "standard"):
-    #   cnn1.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")
+    if(model == "standard"):
+       cnn1.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")
     # else if(model=="fine"):
     # #     cnn2.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")
