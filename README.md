@@ -28,9 +28,9 @@ Attraverso il file `config.json` è possibile configurare la pipeline di apprend
 
 ```json
 {
-	"dataset_dir": "/home/loretto/Desktop/resized_train_cropped",
-	"labels_path": "/home/loretto/Desktop/labels.csv",
-	"output_dir": "/home/loretto/Desktop/output",
+	"dataset_dir": "/home/vannucchi/Desktop/resized_train_cropped",
+	"labels_path": "/home/vannucchi/Desktop/trainLabels_cropped.csv",
+	"output_dir": "/home/vannucchi/Desktop/output",
 	"model": "standard",
 	"epoch": 10,
 	"size": 256,
