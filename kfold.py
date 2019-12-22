@@ -182,8 +182,6 @@ for train_index, test_index in kf.split(X):
     traindir = folddir + "/train"
     valdir = folddir + "/val"
 
-    #os.makedirs(traindir)
-    #os.makedirs(valdir)
 
     for f in range(5):
         if not os.path.exists(traindir + "/" + str(f)):

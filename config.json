@@ -4,7 +4,7 @@
 	"output_dir": "/home/loretto/Desktop/output",
 	"model": "standard",
 	"epoch": 1,
-	"size": 28,
+	"size": 256,
 	"batch": 32,
 	"val_ratio": 20,
 	"kfold": false,

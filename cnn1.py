@@ -40,6 +40,10 @@ def run(epoch, size, batch_size, data_path, results_path):
     train_datagen = ImageDataGenerator(
         rescale=rescale,
         featurewise_center=True,
+        shear_range=0.2,
+        zoom_range=0.5,
+        width_shift_range=0.5,
+        horizontal_flip=True,
         rotation_range=130,
         zca_whitening=True)
 
@@ -54,6 +58,10 @@ def run(epoch, size, batch_size, data_path, results_path):
     validation_datagen = ImageDataGenerator(
         rescale=rescale,
         featurewise_center=True,
+        shear_range=0.2,
+        zoom_range=0.5,
+        width_shift_range=0.5,
+        horizontal_flip=True,
         rotation_range=130,
         zca_whitening=True)
 
@@ -71,19 +79,19 @@ def run(epoch, size, batch_size, data_path, results_path):
                      padding='same'))
     model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
     model.add(Flatten())
     model.add(Dense(512, activation='relu'))
     model.add(Dropout(0.5))
@@ -112,15 +120,19 @@ def run(epoch, size, batch_size, data_path, results_path):
     test_dir = val_dir
     test_datagen = ImageDataGenerator(
         rescale=rescale,
+        featurewise_center=True,
         shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True)
+        zoom_range=0.5,
+        width_shift_range=0.5,
+        horizontal_flip=True,
+        rotation_range=130,
+        zca_whitening=True)
 
     test_generator = test_datagen.flow_from_directory(
         test_dir,
         target_size=target_size,
         class_mode='categorical',
-        batch_size=32,
+        batch_size=batch_size,
         color_mode="rgb",
         shuffle=True)
 

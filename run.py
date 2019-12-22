@@ -1,6 +1,7 @@
 import json
 import cnn1
-#import cnn2
+# import cnn2
+import cnn2
 
 with open('config.json') as json_data_file:
     config = json.load(json_data_file)
@@ -15,11 +16,10 @@ fold = int(config["fold"])
 val_ratio = int(config["val_ratio"])
 batch = int(config["batch"])
 
-
 # run training
 
 
-if(kfold):
+if (kfold):
 
     import argparse
 
@@ -31,7 +31,7 @@ if(kfold):
 
 else:
     print("Esecuzione senza kfold")
-    if(model == "standard"):
-       cnn1.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")
-    # else if(model=="fine"):
-    # #     cnn2.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")
+    if model == "standard":
+        cnn1.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")
+    elif model == "fine":
+        cnn2.run(epoch, size, batch, output_dir + "/dataset", output_dir + "/results")

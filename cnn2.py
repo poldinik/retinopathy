@@ -3,280 +3,171 @@ from __future__ import division
 import numpy as np
 import pandas as pd
 import uuid
-import random
 import os
-import cv2
-import matplotlib.pyplot as plt
-
-import tensorflow as tf
-import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential, Model, load_model
 from keras.layers import Input, Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import cohen_kappa_score
 from keras.utils import plot_model
-
-from keras.applications import VGG16, VGG19, Xception
-
-# Load Dataset
+from keras.applications import VGG16
 
 def toexcel(history_callback, name):
-    #os.chdir("/Users/Lorenzo/Desktop/")
     df = pd.DataFrame(history_callback.history)
     df.to_excel(name + ".xls")
 
-id = str(uuid.uuid1())
 
-results_path = "/home/loretto/Desktop/diabetic/results"
-color_modes = ["grayscale", "rgb"]
+def run(epoch, size, batch_size, data_path, results_path):
+    id = str(uuid.uuid1())
 
-num_classes = 5  # 0, 1, 2, 3, 4
+    color_modes = ["grayscale", "rgb"]
 
-image_size = 256
+    num_classes = 5  # 0, 1, 2, 3, 4
 
+    image_size = size
 
-#Load the VGG model
-#vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
-vgg_conv = VGG19(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
+    vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
 
-#vgg_conv = Xception(include_top=True, weights='imagenet', input_shape=(image_size, image_size, 3),classes=1000)
+    target_size = (image_size, image_size)
+    num_epochs = epoch
+    color_mode = color_modes[1]
 
-target_size = (image_size, image_size)
-num_epochs = 10
-color_mode = color_modes[1]
+    train_dir = data_path + "/train"
+    val_dir = data_path + "/val"
 
-data_path = "/home/loretto/Desktop/dataset"
-train_dir = data_path + "/train"
-val_dir = data_path + "/val"
+    rescale = 1. / 255
+    train_datagen = ImageDataGenerator(
+        rescale=rescale,
+        featurewise_center=True,
+        shear_range=0.2,
+        zoom_range=0.5,
+        width_shift_range=0.5,
+        horizontal_flip=True,
+        rotation_range=130,
+        zca_whitening=True)
 
-# data generator (aug)
-rescale = 1. / 255
-train_datagen = ImageDataGenerator(
-    rescale=rescale,
-    featurewise_center=True,
-    rotation_range=130,
-    zca_whitening=True)
+    train_generator = train_datagen.flow_from_directory(
+        train_dir,
+        target_size=target_size,
+        class_mode='categorical',
+        color_mode=color_mode,
+        batch_size=batch_size,
+        shuffle=True)
 
-train_generator = train_datagen.flow_from_directory(
-    train_dir,
-    target_size=target_size,
-    class_mode='categorical',
-    color_mode=color_mode,
-    shuffle=True)
+    validation_datagen = ImageDataGenerator(
+        rescale=rescale,
+        featurewise_center=True,
+        shear_range=0.2,
+        zoom_range=0.5,
+        width_shift_range=0.5,
+        horizontal_flip=True,
+        rotation_range=130,
+        zca_whitening=True)
 
-validation_datagen = ImageDataGenerator(
-    rescale=rescale,
-    featurewise_center=True,
-    rotation_range=130,
-    zca_whitening=True)
+    validation_generator = validation_datagen.flow_from_directory(
+        val_dir,
+        target_size=target_size,
+        class_mode='categorical',
+        color_mode=color_mode,
+        shuffle=True)
 
-validation_generator = validation_datagen.flow_from_directory(
-    val_dir,
-    target_size=target_size,
-    class_mode='categorical',
-    color_mode=color_mode,
-    shuffle=True)
+    channels = 3
 
-channels = 3
+    if color_mode == "grayscale":
+        channels = 1
 
-if color_mode == "grayscale":
-    channels = 1
+    for layer in vgg_conv.layers[:-4]:
+        layer.trainable = False
 
-# Freeze the layers except the last 4 layers
-for layer in vgg_conv.layers[:-4]:
-    layer.trainable = False
+    for layer in vgg_conv.layers:
+        print(layer, layer.trainable)
 
-# Check the trainable status of the individual layers
-for layer in vgg_conv.layers:
-    print(layer, layer.trainable)
+    model = Sequential()
+    model.add(vgg_conv)
+    model.add(Flatten())
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes, activation='softmax'))
 
-model = Sequential()
+    model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
 
-# Add the vgg convolutional base model
-model.add(vgg_conv)
+    history = model.fit_generator(generator=train_generator,
+                                  steps_per_epoch=train_generator.n // train_generator.batch_size,
+                                  epochs=num_epochs,
+                                  validation_data=validation_generator,
+                                  validation_steps=validation_generator.n // validation_generator.batch_size)
 
-# Add new layers
-model.add(Flatten())
-model.add(Dense(1024, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(num_classes, activation='softmax'))
+    final_dest = results_path + "/" + id
 
-# model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', input_shape=(size, size, channels)))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
+    if not os.path.exists(final_dest):
+        os.makedirs(final_dest)
 
-# model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(target_size[0], target_size[0], 3), padding='same'))
-# model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-#
-# model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-#
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-#
-# model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-#
-# model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
 
+    df = pd.DataFrame(history.history)
+    df.to_excel(final_dest + "/" + "history.xls")
 
-# 1st Conv layer
-# model.add(Conv2D(16, kernel_size=(13, 13), activation='relu', input_shape=(target_size[0], target_size[0], 3), padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-# model.add(Conv2D(16, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-# # 2nd Conv layer
-# model.add(Conv2D(32, kernel_size=(5, 5), activation='relu', padding='same'))
-# model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-# # 3rd Conv layer
-# model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-# # 4th Conv layer
-# model.add(Conv2D(96, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(96, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
-# # 5th Conv layer
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-# model.add(MaxPooling2D(pool_size=(2, 2), padding='same'))
+    rescale = 1. / 255
+    test_dir = val_dir
+    test_datagen = ImageDataGenerator(
+        rescale=rescale,
+        featurewise_center=True,
+        shear_range=0.2,
+        zoom_range=0.5,
+        width_shift_range=0.5,
+        horizontal_flip=True,
+        rotation_range=130,
+        zca_whitening=True)
 
-# Fully-Connected layer
-#model.add(Flatten())
-#model.add(Dense(512, activation='relu'))
-#model.add(Dropout(0.5))
-#model.add(Dense(num_classes, activation='softmax'))
+    test_generator = test_datagen.flow_from_directory(
+        test_dir,
+        target_size=target_size,
+        class_mode='categorical',
+        batch_size=batch_size,
+        color_mode=color_mode,
+        shuffle=True)
 
-# model.summary()
+    pr = model.predict_generator(test_generator, steps=len(test_generator))
 
-# Compile Model
-model.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
+    predicted = []
 
-# Train Model
-history = model.fit_generator(generator=train_generator,
-                              steps_per_epoch=train_generator.n // train_generator.batch_size,
-                              epochs=num_epochs,
-                              validation_data=validation_generator,
-                              validation_steps=validation_generator.n // validation_generator.batch_size)
+    for p in pr:
+        predicted.append(np.argmax(p))
 
+    predicted = np.array(predicted)
 
-final_dest = results_path + "/" + id
+    true = []
 
-if not os.path.exists(final_dest):
-    os.makedirs(final_dest)
+    for l in test_generator.labels:
+        true.append(l)
 
-plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
+    true = np.array(true)
 
-# accuracy = history.history['accuracy']
-# val_accuracy = history.history['val_accuracy']
-# plt.plot(range(len(accuracy)), accuracy, color='blue', label='Training accuracy')
-# plt.plot(range(len(accuracy)), val_accuracy, color='red', label='Validation accuracy')
-# plt.xlabel('Epoch No.')
-# plt.ylabel('Accuracy')
-# plt.legend()
-# plt.show()
+    cnf_matrix = confusion_matrix(true, predicted)
 
+    c = cohen_kappa_score(predicted, true)
 
-toexcel(history, id + "_history-vgg19")
+    acc = accuracy_score(true, predicted)
 
-df = pd.DataFrame(history.history)
-df.to_excel(final_dest + "/" + "history-vgg19.xls")
+    parameters = {}
 
-# Test Data Generator
-rescale = 1. / 255
-test_dir = val_dir
-test_datagen = ImageDataGenerator(
-    rescale=rescale,
-    shear_range=0.2,
-    zoom_range=0.2,
-    horizontal_flip=True)
+    parameters["cohen"] = c
+    parameters["acc"] = acc
 
-test_generator = test_datagen.flow_from_directory(
-    test_dir,
-    target_size=target_size,
-    class_mode='categorical',
-    batch_size=32,
-    color_mode=color_mode,
-    shuffle=True)
+    df = pd.DataFrame(predicted)
+    df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
 
-# result = model.evaluate_generator(test_generator, steps=len(test_generator))
+    df = pd.DataFrame(true)
+    df.to_excel(final_dest + "/" + "test_true" + ".xls")
 
-# df = pd.DataFrame(result)
-# df.to_excel(final_dest + "/" + "test" + ".xls")
+    df = pd.DataFrame(list(parameters.items()), columns=["cohen", "acc"])
+    df.to_excel(final_dest + "/" + "parameters" + ".xls")
 
-pr = model.predict_generator(test_generator, steps=len(test_generator))
+    df = pd.DataFrame(cnf_matrix)
+    df.to_excel(final_dest + "/" + "cm" + ".xls")
 
-print(pr)
-print(pr.shape)
+    metadata = [target_size[0], num_epochs, batch_size]
 
-print(test_generator.labels)
-print(test_generator.labels.shape)
-
-predicted = []
-
-for p in pr:
-    predicted.append(np.argmax(p))
-
-print(predicted)
-predicted = np.array(predicted)
-
-true = []
-
-for l in test_generator.labels:
-    true.append(l)
-
-true = np.array(true)
-
-cnf_matrix = confusion_matrix(true, predicted)
-
-c = cohen_kappa_score(predicted, true)
-
-
-acc = accuracy_score(true, predicted)
-
-parameters = {}
-
-parameters["cohen"] = c
-# parameters["f1"] = f1
-parameters["acc"] = acc
-
-
-df = pd.DataFrame(predicted)
-df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
-
-df = pd.DataFrame(true)
-df.to_excel(final_dest + "/" + "test_true" + ".xls")
-
-df = pd.DataFrame(list(parameters.items()), columns=["cohen", "acc"])
-df.to_excel(final_dest + "/" + "parameters" + ".xls")
-
-df = pd.DataFrame(cnf_matrix)
-df.to_excel(final_dest + "/" + "cm" + ".xls")
-
-metadata = []
-metadata.append(target_size[0])
-metadata.append(num_epochs)
-
-df = pd.DataFrame(metadata)
-df.to_excel(final_dest + "/" + "metadata" + ".xls")
+    df = pd.DataFrame(metadata)
+    df.to_excel(final_dest + "/" + "metadata" + ".xls")
