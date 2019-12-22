@@ -42,7 +42,7 @@ I parametri configurabili sono:
 
 1) **dataset_dir**: directory che punta al dataset 
 2) **labels_path**: directory che punta al file csv delle label 
-3) **output_dir**: è una directory che raccoglie in output i risultati dell'apprendimento, ossia history di apprendimento, matrici di confusione, coefficienti di coehn...
+3) **output_dir**: è una directory che raccoglie in output i risultati dell'apprendimento, ossia history di apprendimento, matrici di confusione, coefficienti di cohen...
 4) **model**: è il modello di rete. Possibili valori "standard" e "fine"
 5) **epoch**: numero di epoche di training 
 6) **size**: dimensione di ridimensionamento delle immagini
