@@ -53,7 +53,7 @@ I parametri configurabili sono:
 
 ## 3. Esecuzione
 
-Il file config presenta una configurazione di default. Per eseguire la pipeline di apprendimento: 
+Il file config presenta una configurazione di default. Per eseguire la pipeline di apprendimento, spostarsi tramite terminale nella cartella del progetto ed eseguire in sequenza: 
 
 
 1) `python organizer.py` (obbligatorio, riorganizza il dataset per compatibilità di keras inserendo in una cartella "dataset" all'interno della cartella di output indicata nel config.json)
