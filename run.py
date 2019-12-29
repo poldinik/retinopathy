@@ -29,6 +29,10 @@ if (kfold):
     index = int(args["fold"])
     directory_dataset = output_dir + "/kfold/" + str(index) + "fold"
     print("Esecuzione training su " + str(index) + "fold")
+    if model == "standard":
+        cnn1.run(epoch, size, batch, directory_dataset, output_dir + "/results")
+    elif model == "fine":
+        cnn2.run(epoch, size, batch, directory_dataset, output_dir + "/results")
 
 else:
     print("Esecuzione senza kfold")
