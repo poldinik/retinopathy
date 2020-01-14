@@ -93,7 +93,7 @@ def getFileName(path):
     return s.split("/")[8]
 
 
-with open('config.json') as json_data_file:
+with open('config_regr.json') as json_data_file:
     config = json.load(json_data_file)
 
 output_dir = config["output_dir"]

@@ -4,7 +4,9 @@ Il seguente codice implementa modelli di reti convoluzionali per il riconoscimen
 
 https://www.kaggle.com/tanlikesmath/diabetic-retinopathy-resized
 
-## 1. Introduzione
+## 1. Modello di rete per classificazione
+
+### 1.1 Introduzione
 
 La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16).
  GPU utilizzata è stata GTX 1050 Ti Nvidia.
@@ -21,7 +23,7 @@ Le librerie utilizzate sono:
 
 L'ambiente di sviluppo è stato prevalentemente in OS Unix (Ubuntu 16 e MacOs Mojave)
 
-## 2. Configurazione
+### 1.2 Configurazione
 
 Attraverso il file `config.json` è possibile configurare la pipeline di apprendimento.
  Il `config.json` fornisce già una configurazione di default:
@@ -54,7 +56,7 @@ I parametri configurabili sono:
 9) **kfold**: se eseguire con cross validation
 10) **fold**: numero fold per cross validation
 
-## 3. Esecuzione
+### 1.3 Esecuzione
 
 Il file config presenta una configurazione di default. Per eseguire la pipeline di apprendimento, spostarsi tramite terminale nella cartella del progetto ed eseguire in sequenza: 
 
@@ -74,3 +76,48 @@ Per eseguire un apprendimento senza cross validation è sufficiente `python run.
 
 
 Tutti i risultati degli apprendimenti vengono salvati nella cartella **results**. Ogni risultato fornisce una immagine dei modello utilizzato, matrice di confusione sul test set, accuracy e loss function per training e validation set, alcuni meta parametri e coefficiente Kappa di Cohen per valutare la concordanza sul test set.
+
+## 2. Modello di rete per regressione
+
+### 2.1 Introduzione
+
+La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16).
+ GPU utilizzata è stata GTX 1050 Ti Nvidia.
+Le librerie utilizzate sono:
+
+1) tensorflow==1.7.0
+2) numpy==1.17.3
+3) matplotlib==2.1.2
+4) Keras_Preprocessing==1.1.0
+5) pandas==0.22.0
+6) opencv_contrib_python==3.4.0.12
+7) Keras==2.2.4
+8) scikit_learn==0.22
+
+L'ambiente di sviluppo è stato prevalentemente in OS Unix (Ubuntu 16 e MacOs Mojave)
+
+### 2.2 Configurazione
+
+Attraverso il file `config_regr.json` è possibile configurare la pipeline di apprendimento.
+ Il `config_regr.json` fornisce già una configurazione di default:
+
+```json
+{
+	"size": 32,
+	"epochs": 50,
+	"batch_size": 8,
+	"dataset": "/Users/vannucchi/Downloads/diabetic-retinopathy-resized/resized_train_cropped/resized_train_cropped",
+    "labels_path": "/Users/vannucchi/Downloads/diabetic-retinopathy-resized/trainLabels_cropped.csv",
+	"final_dest": "/Users/vannucchi/Desktop/dest"
+}
+```
+é necessario sostituire i valori dei parametri `dataset`, `labels_path`, `final_dest` con percorsi opportuni. Di seguito sono riportate le descrizioni dei vari campi.
+**Il campo dataset è un path che punta alla cartella contenete tutti i file degli esempi**, così come viene fornito da kaggle.
+
+
+
+### 2.3 Esecuzione
+
+`python regression.py`
+
+Tutti i risultati degli apprendimenti vengono salvati nella cartella **dest**.
