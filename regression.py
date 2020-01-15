@@ -57,10 +57,7 @@ history = model.fit(trainImagesX, trainY, validation_data=(testImagesX, testY),
 	epochs=epochs, batch_size=batch_size)
 
 
-df = pd.DataFrame(history.history)
-df.to_excel(final_dest + "/" + "history.xls")
-
-plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
+#plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
 
 print("[INFO] predizione...")
 preds = model.predict(testImagesX)
@@ -79,6 +76,10 @@ print("[INFO] avg. grado retinopatia: {}, std retinopatia: {}".format(
 	locale.currency(df["level"].mean(), grouping=True),
 	locale.currency(df["level"].std(), grouping=True)))
 print("[INFO] mean: {:.2f}%, std: {:.2f}%".format(mean, std))
+
+
+df = pd.DataFrame(history.history)
+df.to_excel(final_dest + "/" + "history.xls")
 
 df = pd.DataFrame(preds)
 df.to_excel(final_dest + "/" + "test_predicted" + ".xls")

@@ -110,7 +110,7 @@ def run(epoch, size, batch_size, data_path, results_path):
     if not os.path.exists(final_dest):
         os.makedirs(final_dest)
 
-    plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
+    #plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
 
     df = pd.DataFrame(history.history)
     df.to_excel(final_dest + "/" + "history.xls")
