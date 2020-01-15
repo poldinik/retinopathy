@@ -50,7 +50,7 @@ testY = testAttrX["level"]
 
 model = create_cnn(size, size, 3, regress=True)
 opt = Adam(lr=1e-3, decay=1e-3 / 200)
-model.compile(loss="mean_absolute_percentage_error", optimizer=opt)
+model.compile(loss="mean_absolute_percentage_error", optimizer=opt, metrics=["accuracy"])
 
 print("[INFO] training model...")
 history = model.fit(trainImagesX, trainY, validation_data=(testImagesX, testY),
