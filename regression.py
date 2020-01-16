@@ -1,10 +1,12 @@
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
-import numpy as np
-import locale
 import pandas as pd
-from keras.utils import plot_model
 import json
+import numpy as np
+
+
+from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import cohen_kappa_score
 
 from regr_data import load_fundus_images
 from regr_model import create_cnn
@@ -19,7 +21,6 @@ dataset = config["dataset"]
 labels_path = config["labels_path"]
 final_dest = config["final_dest"]
 
-
 print("[INFO] caricamento labels...")
 
 # size = 32
@@ -33,7 +34,6 @@ print("[INFO] caricamento labels...")
 
 df = pd.read_csv(labels_path)
 
-
 print("[INFO] caricamento esempi...")
 
 images = load_fundus_images(df, dataset, size)
@@ -44,7 +44,6 @@ print(images.shape)
 split = train_test_split(df, images, test_size=0.20, random_state=42)
 (trainAttrX, testAttrX, trainImagesX, testImagesX) = split
 
-
 trainY = trainAttrX["level"]
 testY = testAttrX["level"]
 
@@ -54,32 +53,43 @@ model.compile(loss="mean_absolute_percentage_error", optimizer=opt, metrics=["ac
 
 print("[INFO] training model...")
 history = model.fit(trainImagesX, trainY, validation_data=(testImagesX, testY),
-	epochs=epochs, batch_size=batch_size)
+                    epochs=epochs, batch_size=batch_size)
 
+# plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
 
-#plot_model(model, to_file=final_dest + "/" + "model.png", show_shapes=True, show_layer_names=True)
-
-print("[INFO] predizione...")
+print("[INFO] predizione su test set...")
 preds = model.predict(testImagesX)
 
-diff = preds.flatten() - testY
-percentDiff = (diff / testY) * 100
-absPercentDiff = np.abs(percentDiff)
+# Intero più vicino
+predicted = np.ceil(preds)
 
+cnf_matrix = confusion_matrix(testY, predicted)
 
-mean = np.mean(absPercentDiff)
-std = np.std(absPercentDiff)
+c = cohen_kappa_score(predicted, testY)
 
+acc = accuracy_score(testY, predicted)
 
-locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
-print("[INFO] avg. grado retinopatia: {}, std retinopatia: {}".format(
-	df["level"].mean(),
-	df["level"].std()))
-print("[INFO] mean: {:.2f}%, std: {:.2f}%".format(mean, std))
+print("CONFUSION MATRIX")
 
+print(cnf_matrix)
 
-df = pd.DataFrame(history.history)
-df.to_excel(final_dest + "/" + "history.xls")
+print("[INFO] accuracy sul test: {}, K cohen: {}".format(acc, c))
 
-df = pd.DataFrame(preds)
-df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
+# diff = preds.flatten() - testY
+# percentDiff = (diff / testY) * 100
+# absPercentDiff = np.abs(percentDiff)
+#
+# mean = np.mean(absPercentDiff)
+# std = np.std(absPercentDiff)
+#
+# locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+# print("[INFO] avg. grado retinopatia: {}, std retinopatia: {}".format(
+#     df["level"].mean(),
+#     df["level"].std()))
+# print("[INFO] mean: {:.2f}%, std: {:.2f}%".format(mean, std))
+#
+# df = pd.DataFrame(history.history)
+# df.to_excel(final_dest + "/" + "history.xls")
+#
+# df = pd.DataFrame(preds)
+# df.to_excel(final_dest + "/" + "test_predicted" + ".xls")

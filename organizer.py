@@ -148,7 +148,7 @@ def organize(samples_path, label_csv_path, final_dest, percent):
             moveTo(current_files_path[i], val_folder + "/" + f + "/" + current_files_names[i])
 
 
-with open('config_regr.json') as json_data_file:
+with open('config.json') as json_data_file:
     config = json.load(json_data_file)
 
 dataset_dir = config["dataset_dir"]
