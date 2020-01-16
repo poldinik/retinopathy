@@ -148,7 +148,7 @@ def run_augmentation(folder_path):
     # print("Generazione augmentation per cartella " + folder_path + " completata con successo!")
 
 
-with open('config_regr.json') as json_data_file:
+with open('config.json') as json_data_file:
     config = json.load(json_data_file)
 
 output_dir = config["output_dir"]
