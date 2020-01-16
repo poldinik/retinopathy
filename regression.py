@@ -73,8 +73,8 @@ std = np.std(absPercentDiff)
 
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 print("[INFO] avg. grado retinopatia: {}, std retinopatia: {}".format(
-	locale.currency(df["level"].mean(), grouping=True),
-	locale.currency(df["level"].std(), grouping=True)))
+	df["level"].mean(),
+	df["level"].std()))
 print("[INFO] mean: {:.2f}%, std: {:.2f}%".format(mean, std))
 
 
