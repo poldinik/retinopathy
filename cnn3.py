@@ -115,6 +115,7 @@ def save_history_images(history_path_file, name, final_dest):
     plt.grid(True)
     plt.savefig(final_dest + "/" + name + "_loss.png", dpi=500)
 
+
 def save_history_images_mse(history_path_file, name, final_dest):
     rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
     ## for Palatino and other serif fonts use:
@@ -125,10 +126,10 @@ def save_history_images_mse(history_path_file, name, final_dest):
 
     df = pd.read_excel(path)
 
-    nrows = len(df['mse'])
+    nrows = len(df['mean_squared_error'])
 
-    acc = df['mse'][0:nrows]
-    val_acc = df['val_mse'][0:nrows]
+    acc = df['mean_squared_error'][0:nrows]
+    val_acc = df['val_mean_squared_error'][0:nrows]
 
     loss = df['loss'][0:nrows]
     val_loss = df['val_loss'][0:nrows]
@@ -221,9 +222,48 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
 
     sample_size = target_size[0]
 
+    if (isCheckPoint):
+        try:
+            model = load_model(checkpoint_folder + "/model.h5")
+        except:
 
-    if(isCheckPoint):
-        model = load_model(checkpoint_folder + "/model.h5")
+            print("[INFO] modello non presente nella cartella...creazione di uno nuovo")
+            model = Sequential()
+
+            model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(target_size[0], target_size[0], 3),
+                             padding='same'))
+            model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
+            model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+            if (sample_size >= 64):
+                model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+            if (sample_size >= 128):
+                model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+            if (sample_size >= 256):
+                model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+            if (sample_size >= 512):
+                model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+            if (sample_size >= 1024):
+                model.add(Conv2D(1024, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(Conv2D(1024, kernel_size=(3, 3), activation='relu', padding='same'))
+                model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+            model.add(Flatten())
+            model.add(Dense(dense_level, activation='relu'))
+            model.add(Dropout(0.5))
+            model.add(Dense(1))
     else:
         model = Sequential()
 
@@ -232,8 +272,7 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
         model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
         model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-
-        if(sample_size >= 64):
+        if (sample_size >= 64):
             model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
             model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
             model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
@@ -258,7 +297,6 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
             model.add(Conv2D(1024, kernel_size=(3, 3), activation='relu', padding='same'))
             model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-
         model.add(Flatten())
         model.add(Dense(dense_level, activation='relu'))
         model.add(Dropout(0.5))
@@ -266,18 +304,23 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
 
     model.compile(loss='mse', optimizer='adadelta', metrics=['mse'])
 
-    history = model.fit_generator(generator=train_generator,
-                                  steps_per_epoch=train_generator.n // train_generator.batch_size,
-                                  epochs=num_epochs,
-                                  validation_data=validation_generator,
-                                  validation_steps=validation_generator.n // validation_generator.batch_size)
+    try:
+        history = model.fit_generator(generator=train_generator,
+                                      steps_per_epoch=train_generator.n // train_generator.batch_size,
+                                      epochs=num_epochs,
+                                      validation_data=validation_generator,
+                                      validation_steps=validation_generator.n // validation_generator.batch_size)
+
+    except Exception as e:
+        print(
+            "[ERROR] Possibile errore legato a file corrotti, o alla discrepanza tra la dimensione dei sample gestita dal ricaricato tramite checkpoint e la dimensione effettiva caricata nel corrente apprendimento")
+        print(e)
 
     print("[INFO] Creazione cartella risultati...")
 
     final_dest = results_path + "/" + id_result
     if not os.path.exists(final_dest):
         os.makedirs(final_dest)
-
 
     try:
         print("[INFO] Salvataggio history...")
@@ -393,10 +436,9 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
 
     try:
         print("[INFO] Creazione immagini history...")
-        save_history_images(history_path, id_result, final_dest)
+        save_history_images_mse(history_path, id_result, final_dest)
     except Exception as e:
         print("[ERROR] Creazione immagini history")
         print(e)
-
 
     print("[INFO] Fine")

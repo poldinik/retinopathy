@@ -50,7 +50,17 @@ else:
         elif model == "fine":
             cnn2.run(epoch, size, batch, directory_dataset, output_dir + "/results")
         elif model == "regression":
-            cnn3.run(epoch, size, batch, directory_dataset, output_dir + "/results")
+            print("[INFO] Esecuzione pipeline apprendimento con modello di regressione")
+
+            checkpoint = output_dir + "/checkpoint"
+            if not os.path.exists(checkpoint):
+                print("[INFO] Checkpoint non presente")
+                print("[INFO] Creazione cartella checkpoint..")
+                os.makedirs(checkpoint)
+                cnn3.run(epoch, size, batch, directory_dataset, output_dir + "/results", dense_level, False, checkpoint)
+            else:
+                print("[INFO] Checkpoint presente (viene ricaricarto il modello trainato in precedenza)")
+                cnn3.run(epoch, size, batch, directory_dataset, output_dir + "/results", dense_level, True, checkpoint)
 
     else:
         if model == "standard":

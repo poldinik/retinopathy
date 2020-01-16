@@ -3,10 +3,10 @@
 	"labels_path": "/Users/loretto/Downloads/diabetic-retinopathy-resized/trainLabels_cropped.csv",
 	"output_dir": "/Users/loretto/Desktop/output",
 	"model": "regression",
-	"epoch": 20,
-	"size": 512,
+	"epoch": 50,
+	"size": 256,
 	"batch": 32,
-	"dense_level": 8,
+	"dense_level": 512,
 	"val_ratio": 20,
 	"kfold": false,
 	"fold": 3
