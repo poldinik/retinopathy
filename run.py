@@ -3,7 +3,7 @@ import cnn1
 # import cnn2
 import cnn2
 
-with open('config_regr.json') as json_data_file:
+with open('config.json') as json_data_file:
     config = json.load(json_data_file)
 
 dataset_dir = config["dataset_dir"]
