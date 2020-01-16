@@ -79,10 +79,10 @@ def save_confusion_matrix(matrix_path, name, title, final_dest):
 
 
 def save_history_images(history_path_file, name, final_dest):
-    rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
+    #rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
     ## for Palatino and other serif fonts use:
     # rc('font',**{'family':'serif','serif':['Palatino']})
-    rc('text', usetex=True)
+    #rc('text', usetex=True)
 
     path = history_path_file
 
@@ -117,10 +117,10 @@ def save_history_images(history_path_file, name, final_dest):
 
 
 def save_history_images_mse(history_path_file, name, final_dest):
-    rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
+    #rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
     ## for Palatino and other serif fonts use:
     # rc('font',**{'family':'serif','serif':['Palatino']})
-    rc('text', usetex=True)
+    #rc('text', usetex=True)
 
     path = history_path_file
 
