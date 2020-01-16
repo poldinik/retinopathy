@@ -19,7 +19,7 @@ def toexcel(history_callback, name):
     df.to_excel(name + ".xls")
 
 
-def run(epoch, size, batch_size, data_path, results_path):
+def run(epoch, size, batch_size, data_path, results_path, dense_level):
     id = str(uuid.uuid1())
 
     color_modes = ["grayscale", "rgb"]
@@ -87,7 +87,7 @@ def run(epoch, size, batch_size, data_path, results_path):
     model = Sequential()
     model.add(vgg_conv)
     model.add(Flatten())
-    model.add(Dense(1024, activation='relu'))
+    model.add(Dense(dense_level, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax'))
 

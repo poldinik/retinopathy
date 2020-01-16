@@ -19,7 +19,7 @@ def toexcel(history_callback, name):
     df.to_excel(name + ".xls")
 
 
-def run(epoch, size, batch_size, data_path, results_path):
+def run(epoch, size, batch_size, data_path, results_path, dense_level):
     id_result = str(uuid.uuid1())
 
     # results_path = "/home/loretto/Desktop/diabetic/results"
@@ -37,15 +37,18 @@ def run(epoch, size, batch_size, data_path, results_path):
 
     # data generator (aug)
     rescale = 1. / 255
+    # train_datagen = ImageDataGenerator(
+    #     rescale=rescale,
+    #     featurewise_center=True,
+    #     shear_range=0.2,
+    #     zoom_range=0.5,
+    #     width_shift_range=0.5,
+    #     horizontal_flip=True,
+    #     rotation_range=130,
+    #     zca_whitening=True)
+
     train_datagen = ImageDataGenerator(
-        rescale=rescale,
-        featurewise_center=True,
-        shear_range=0.2,
-        zoom_range=0.5,
-        width_shift_range=0.5,
-        horizontal_flip=True,
-        rotation_range=130,
-        zca_whitening=True)
+        rescale=rescale)
 
     train_generator = train_datagen.flow_from_directory(
         train_dir,
@@ -55,15 +58,18 @@ def run(epoch, size, batch_size, data_path, results_path):
         color_mode="rgb",
         shuffle=True)
 
+    # validation_datagen = ImageDataGenerator(
+    #     rescale=rescale,
+    #     featurewise_center=True,
+    #     shear_range=0.2,
+    #     zoom_range=0.5,
+    #     width_shift_range=0.5,
+    #     horizontal_flip=True,
+    #     rotation_range=130,
+    #     zca_whitening=True)
+
     validation_datagen = ImageDataGenerator(
-        rescale=rescale,
-        featurewise_center=True,
-        shear_range=0.2,
-        zoom_range=0.5,
-        width_shift_range=0.5,
-        horizontal_flip=True,
-        rotation_range=130,
-        zca_whitening=True)
+        rescale=rescale)
 
     validation_generator = validation_datagen.flow_from_directory(
         val_dir,
@@ -79,21 +85,21 @@ def run(epoch, size, batch_size, data_path, results_path):
                      padding='same'))
     model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    # model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
+    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
     model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
+    model.add(Dense(dense_level, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax'))
 
@@ -118,15 +124,18 @@ def run(epoch, size, batch_size, data_path, results_path):
     # Test Data
     rescale = 1. / 255
     test_dir = val_dir
+    # test_datagen = ImageDataGenerator(
+    #     rescale=rescale,
+    #     featurewise_center=True,
+    #     shear_range=0.2,
+    #     zoom_range=0.5,
+    #     width_shift_range=0.5,
+    #     horizontal_flip=True,
+    #     rotation_range=130,
+    #     zca_whitening=True)
+
     test_datagen = ImageDataGenerator(
-        rescale=rescale,
-        featurewise_center=True,
-        shear_range=0.2,
-        zoom_range=0.5,
-        width_shift_range=0.5,
-        horizontal_flip=True,
-        rotation_range=130,
-        zca_whitening=True)
+        rescale=rescale)
 
     test_generator = test_datagen.flow_from_directory(
         test_dir,
