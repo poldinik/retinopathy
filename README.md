@@ -20,6 +20,8 @@ Le librerie utilizzate sono:
 6) opencv_contrib_python==3.4.0.12
 7) Keras==2.2.4
 8) scikit_learn==0.22
+9) pydot==1.4.1
+10) graphviz==0.13.2
 
 L'ambiente di sviluppo è stato prevalentemente in OS Unix (Ubuntu 16 e MacOs Mojave)
 
