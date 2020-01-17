@@ -30,17 +30,18 @@ Attraverso il file `config.json` è possibile configurare la pipeline di apprend
 
 ```json
 {
-	"dataset_dir": "/home/vannucchi/Desktop/resized_train_cropped",
-	"labels_path": "/home/vannucchi/Desktop/trainLabels_cropped.csv",
-	"output_dir": "/home/vannucchi/Desktop/output",
-	"model": "standard",
-	"epoch": 10,
-	"size": 256,
-	"batch": 32,
-	"val_ratio": 20,
-	"kfold": false,
-	"fold": 3
-}
+   "dataset_dir": "/Users/vannucchi/Downloads/diabetic-retinopathy-resized/resized_train_cropped/resized_train_cropped",
+   "labels_path": "/Users/vannucchi/Downloads/diabetic-retinopathy-resized/trainLabels_cropped.csv",
+   "output_dir": "/Users/vannucchi/Desktop/output",
+   "model": "regression",
+   "epoch": 20,
+   "size": 256,
+   "batch": 32,
+   "dense_level": 512,
+   "val_ratio": 20,
+   "kfold": false,
+   "fold": 3
+} 
 ```
 é necessario sostituire i valori dei parametri `dataset_dir`, `labels_path`, `output_dir` con percorsi opportuni. Di seguito sono riportate le descrizioni dei vari campi.
 I parametri configurabili sono:
@@ -48,13 +49,14 @@ I parametri configurabili sono:
 1) **dataset_dir**: directory che punta ai file del dataset fornito da kaggle (**sostituire** con percorso valido)
 2) **labels_path**: directory che punta al file csv delle labels (**sostituire** con percorso valido)
 3) **output_dir**: è una directory che raccoglie in output i risultati dell'apprendimento, ossia history di apprendimento, matrici di confusione, coefficienti di cohen...(**sostituire** con percorso valido)
-4) **model**: è il modello di rete. Possibili valori `standard` e `fine`.`standard` fornisce una implementazione di una rete neurali convoluzionale (file `cnn1.py`). Per modificare i layer del modello è necessario operare direttamente sul file. `fine` fornisce una implementazione tramite tecnica di fine tuning
+4) **model**: è il modello di rete. Possibili valori `standard`, `fine`, `regression` .`standard` fornisce una implementazione di una rete neurali convoluzionale (file `cnn1.py`). Per modificare i layer del modello è necessario operare direttamente sul file. `fine` fornisce una implementazione tramite tecnica di fine tuning.  `regression` fornisce un modello di regressione ( `cnn3.py`)
 5) **epoch**: numero di epoche di training 
 6) **size**: dimensione di ridimensionamento delle immagini
-7) **batch**: dimensione del batch di training
-8) **val_ratio**: percentuale proporzione validation set rispetto al training set
-9) **kfold**: se eseguire con cross validation
-10) **fold**: numero fold per cross validation
+7) **dense_level**: dimensione del livello fully connected
+8) **batch**: dimensione del batch di training
+9) **val_ratio**: percentuale proporzione validation set rispetto al training set
+10) **kfold**: se eseguire con cross validation
+11) **fold**: numero fold per cross validation
 
 ### 1.3 Esecuzione
 
@@ -77,47 +79,6 @@ Per eseguire un apprendimento senza cross validation è sufficiente `python run.
 
 Tutti i risultati degli apprendimenti vengono salvati nella cartella **results**. Ogni risultato fornisce una immagine dei modello utilizzato, matrice di confusione sul test set, accuracy e loss function per training e validation set, alcuni meta parametri e coefficiente Kappa di Cohen per valutare la concordanza sul test set.
 
-## 2. Modello di rete per regressione
+### 1.4 Checkpoint
 
-### 2.1 Introduzione
-
-La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16).
- GPU utilizzata è stata GTX 1050 Ti Nvidia.
-Le librerie utilizzate sono:
-
-1) tensorflow==1.7.0
-2) numpy==1.17.3
-3) matplotlib==2.1.2
-4) Keras_Preprocessing==1.1.0
-5) pandas==0.22.0
-6) opencv_contrib_python==3.4.0.12
-7) Keras==2.2.4
-8) scikit_learn==0.22
-
-L'ambiente di sviluppo è stato prevalentemente in OS Unix (Ubuntu 16 e MacOs Mojave)
-
-### 2.2 Configurazione
-
-Attraverso il file `config_regr.json` è possibile configurare la pipeline di apprendimento.
- Il `config_regr.json` fornisce già una configurazione di default:
-
-```json
-{
-	"size": 32,
-	"epochs": 50,
-	"batch_size": 8,
-	"dataset": "/Users/vannucchi/Downloads/diabetic-retinopathy-resized/resized_train_cropped/resized_train_cropped",
-    "labels_path": "/Users/vannucchi/Downloads/diabetic-retinopathy-resized/trainLabels_cropped.csv",
-	"final_dest": "/Users/vannucchi/Desktop/dest"
-}
-```
-é necessario sostituire i valori dei parametri `dataset`, `labels_path`, `final_dest` con percorsi opportuni. Di seguito sono riportate le descrizioni dei vari campi.
-**Il campo dataset è un path che punta alla cartella contenete tutti i file degli esempi**, così come viene fornito da kaggle.
-
-
-
-### 2.3 Esecuzione
-
-`python regression.py`
-
-Tutti i risultati degli apprendimenti vengono salvati nella cartella **dest**.
+La versione del modello  `regression` implementa un meccanismo di checkpoint per cui è la pipeline salva automaticamente il modelllo addestrato per riutilizzarlo in addestramenti successivi. Ad ogni lancio viene controllata la presenza o meno del modello. Se presente viene caricato e sostituito alla fine del nuovo addestramento.
