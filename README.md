@@ -8,8 +8,8 @@ https://www.kaggle.com/tanlikesmath/diabetic-retinopathy-resized
 
 ### 1.1 Introduzione
 
-La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16).
- GPU utilizzata è stata GTX 1050 Ti Nvidia.
+La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16). L'interprete è stato Aconda (https://www.anaconda.com/)
+ GPU utilizzata è stata GTX 1050 Ti Nvidia e versione del framework CUDA 9.0.
 Le librerie utilizzate sono:
 
 1) tensorflow==1.7.0
@@ -50,7 +50,7 @@ I parametri configurabili sono:
 
 1) **dataset_dir**: directory che punta ai file del dataset fornito da kaggle (**sostituire** con percorso valido)
 2) **labels_path**: directory che punta al file csv delle labels (**sostituire** con percorso valido)
-3) **output_dir**: è una directory che raccoglie in output i risultati dell'apprendimento, ossia history di apprendimento, matrici di confusione, coefficienti di cohen...(**sostituire** con percorso valido)
+3) **output_dir**: è una directory che raccoglie in output i risultati dell'apprendimento, ossia history di apprendimento, matrici di confusione, coefficienti di cohen...(**sostituire** con percorso valido). Dentro ouput vengono creati anche cartelle di checkpoint (per modello di regression) e cartella del dataset riorganizzato
 4) **model**: è il modello di rete. Possibili valori `standard`, `fine`, `regression` .`standard` fornisce una implementazione di una rete neurali convoluzionale (file `cnn1.py`). Per modificare i layer del modello è necessario operare direttamente sul file. `fine` fornisce una implementazione tramite tecnica di fine tuning.  `regression` fornisce un modello di regressione ( `cnn3.py`)
 5) **epoch**: numero di epoche di training 
 6) **size**: dimensione di ridimensionamento delle immagini
@@ -83,4 +83,4 @@ Tutti i risultati degli apprendimenti vengono salvati nella cartella **results**
 
 ### 1.4 Checkpoint
 
-La versione del modello  `regression` implementa un meccanismo di checkpoint per cui è la pipeline salva automaticamente il modelllo addestrato per riutilizzarlo in addestramenti successivi. Ad ogni lancio viene controllata la presenza o meno del modello. Se presente viene caricato e sostituito alla fine del nuovo addestramento.
+La versione del modello  `regression` implementa un meccanismo di checkpoint per cui la pipeline salva automaticamente il modelllo addestrato per riutilizzarlo in addestramenti successivi. Ad ogni lancio viene controllata la presenza o meno del modello. Se presente viene caricato e sostituito alla fine del nuovo addestramento.
