@@ -4,7 +4,7 @@ Il seguente codice implementa modelli di reti convoluzionali per il riconoscimen
 
 https://www.kaggle.com/tanlikesmath/diabetic-retinopathy-resized
 
-## 1. Modello di rete per classificazione
+## 1. Modello di rete per classificazione (tramite classificazione o regressione)
 
 ### 1.1 Introduzione
 
