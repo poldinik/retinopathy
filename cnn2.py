@@ -134,7 +134,7 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
     predicted = []
 
     for p in pr:
-        predicted.append(np.argmax(p))
+        predicted.append(p)
 
     predicted = np.array(predicted)
 

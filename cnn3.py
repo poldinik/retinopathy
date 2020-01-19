@@ -17,23 +17,20 @@ from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import itertools
 from matplotlib import rc
 from keras.models import load_model
+import warnings
+import sys
+
+if not sys.warnoptions:
+    warnings.simplefilter("ignore")
 
 
-def plot_confusion_matrix(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-    """
-    This function prints and plots the confusion matrix.
-    Normalization can be applied by setting `normalize=True`.
-    """
+def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
         print("Normalized confusion matrix")
     else:
         print('Confusion matrix, without normalization')
-
-    print(cm)
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
@@ -131,27 +128,14 @@ def save_history_images_mse(history_path_file, name, final_dest):
     acc = df['mean_squared_error'][0:nrows]
     val_acc = df['val_mean_squared_error'][0:nrows]
 
-    loss = df['loss'][0:nrows]
-    val_loss = df['val_loss'][0:nrows]
-
     plt.plot(acc, color="black")
     plt.plot(val_acc, linestyle='--', color="black")
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
+    plt.title('model MSE')
+    plt.ylabel('mse')
     plt.xlabel('epoch')
     plt.legend(['train', 'validation'], loc='upper left')
     plt.grid(True)
-    plt.savefig(final_dest + "/" + name + "_acc.png", dpi=500)
-
-    # summarize history for loss
-    plt.plot(loss, color="black")
-    plt.plot(val_loss, linestyle='--', color="black")
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.grid(True)
-    plt.savefig(final_dest + "/" + name + "_loss.png", dpi=500)
+    plt.savefig(final_dest + "/" + name + "_mse.png", dpi=500)
 
 
 def toexcel(history_callback, name):
@@ -358,24 +342,25 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
         color_mode="rgb",
         shuffle=True)
 
+    number_of_examples = len(test_generator.filenames)
+    number_of_generator_calls = np.math.ceil(number_of_examples / (1.0 * batch_size))
+
+    test_labels = []
+
+    for i in range(0, int(number_of_generator_calls)):
+        test_labels.extend(np.array(test_generator[i][1]))
+
+    test_labels = np.array(test_labels)
+
     pr = model.predict_generator(test_generator, steps=len(test_generator))
 
-    predicted = []
-
-    for p in pr:
-        predicted.append(np.argmax(p))
-
-    predicted = np.array(predicted)
-
-    true = []
-
-    for l in test_generator.labels:
-        true.append(l)
 
     # Arrotonda all'intero più vicino
-    predicted = np.ceil(predicted)
+    predicted = np.ceil(pr)
 
-    true = np.array(true)
+    #predicted[predicted >= 4] = 4
+
+    true = test_labels
 
     print("[INFO] Salvataggio modello (checkpoint) in corso...")
     model.save(checkpoint_folder + "/model.h5")
@@ -398,7 +383,7 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
     parameters = {"cohen": c, "acc": acc}
 
     try:
-        df = pd.DataFrame(predicted)
+        df = pd.DataFrame(pr)
         df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
     except Exception as e:
         print("[ERROR] Salvataggio file excel predizioni")
