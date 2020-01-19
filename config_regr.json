@@ -1,8 +1,0 @@
-{
-	"size": 32,
-	"epochs":1,
-	"batch_size": 8,
-	"dataset": "/Users/loretto/Desktop/dataset",
-    "labels_path": "/Users/loretto/Downloads/diabetic-retinopathy-resized/trainLabels_cropped.csv",
-	"final_dest": "/Users/loretto/Desktop/dest"
-}

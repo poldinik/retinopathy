@@ -8,7 +8,7 @@ https://www.kaggle.com/tanlikesmath/diabetic-retinopathy-resized
 
 ### 1.1 Introduzione
 
-La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16). L'interprete è stato Aconda (https://www.anaconda.com/)
+La versione di linguaggio python utilizzata è la 3.x (In particolare la 3.6), su macchina Linux (ubuntu 16). L'interprete è stato Anaconda (https://www.anaconda.com/)
  GPU utilizzata è stata GTX 1050 Ti Nvidia e versione del framework CUDA 9.0.
 Le librerie utilizzate sono:
 
@@ -42,7 +42,8 @@ Attraverso il file `config.json` è possibile configurare la pipeline di apprend
    "dense_level": 512,
    "val_ratio": 20,
    "kfold": false,
-   "fold": 3
+   "fold": 3,
+   "regr_approximation": "ceil"
 } 
 ```
 é necessario sostituire i valori dei parametri `dataset_dir`, `labels_path`, `output_dir` con percorsi opportuni. Di seguito sono riportate le descrizioni dei vari campi.
@@ -59,6 +60,7 @@ I parametri configurabili sono:
 9) **val_ratio**: percentuale proporzione validation set rispetto al training set
 10) **kfold**: se eseguire con cross validation
 11) **fold**: numero fold per cross validation
+12) **regr_approximation**: è la politica di approssimazione della stima con regressione. I valori possono essere **ceil** o **modf**. Nel primo caso si approssimerà con l'intero più vicino. Nel secondo caso con la parte intera.
 
 ### 1.3 Esecuzione
 
@@ -84,3 +86,12 @@ Tutti i risultati degli apprendimenti vengono salvati nella cartella **results**
 ### 1.4 Checkpoint
 
 La versione del modello  `regression` implementa un meccanismo di checkpoint per cui la pipeline salva automaticamente il modelllo addestrato per riutilizzarlo in addestramenti successivi. Ad ogni lancio viene controllata la presenza o meno del modello. Se presente viene caricato e sostituito alla fine del nuovo addestramento.
+
+
+### 1.5 Esecuzione di un test
+
+Verificare la presenza del modello **model.h5** nella cartella **checkpoint**. Eseguire
+
+`python test.py`
+
+per eseguire un test. I risultati verranno salvati nella cartella **results** (Labels originali, labels predette, matrice di confusione)
