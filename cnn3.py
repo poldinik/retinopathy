@@ -123,10 +123,10 @@ def save_history_images_mse(history_path_file, name, final_dest):
 
     df = pd.read_excel(path)
 
-    nrows = len(df['mean_squared_error'])
+    nrows = len(df['loss'])
 
-    acc = df['mean_squared_error'][0:nrows]
-    val_acc = df['val_mean_squared_error'][0:nrows]
+    acc = df['loss'][0:nrows]
+    val_acc = df['val_loss'][0:nrows]
 
     plt.plot(acc, color="black")
     plt.plot(val_acc, linestyle='--', color="black")
@@ -286,7 +286,7 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level, isCheckPo
         model.add(Dropout(0.5))
         model.add(Dense(1))
 
-    model.compile(loss='mse', optimizer='adadelta', metrics=['mse'])
+    model.compile(loss='mse', optimizer='adadelta', metrics=['mae'])
 
     try:
         history = model.fit_generator(generator=train_generator,
