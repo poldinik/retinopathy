@@ -134,9 +134,12 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
     predicted = []
 
     for p in pr:
-        predicted.append(p)
+        predicted.append(np.argmax(p))
 
     predicted = np.array(predicted)
+
+    df = pd.DataFrame(predicted)
+    df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
 
     true = []
 
@@ -144,6 +147,13 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
         true.append(l)
 
     true = np.array(true)
+
+    df = pd.DataFrame(true)
+    df.to_excel(final_dest + "/" + "test_true" + ".xls")
+
+    print(predicted)
+
+
 
     cnf_matrix = confusion_matrix(true, predicted)
 
@@ -156,11 +166,6 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
     parameters["cohen"] = c
     parameters["acc"] = acc
 
-    df = pd.DataFrame(predicted)
-    df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
-
-    df = pd.DataFrame(true)
-    df.to_excel(final_dest + "/" + "test_true" + ".xls")
 
     df = pd.DataFrame(list(parameters.items()), columns=["cohen", "acc"])
     df.to_excel(final_dest + "/" + "parameters" + ".xls")
