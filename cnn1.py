@@ -79,25 +79,40 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
         color_mode="rgb",
         shuffle=True)
 
+    sample_size = target_size[0]
+
     model = Sequential()
 
     model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(target_size[0], target_size[0], 3),
                      padding='same'))
     model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', padding='same'))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    # model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
-    # model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    if (sample_size >= 64):
+        model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    if (sample_size >= 128):
+        model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    if (sample_size >= 256):
+        model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    if (sample_size >= 512):
+        model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(Conv2D(512, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    if (sample_size >= 1024):
+        model.add(Conv2D(1024, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(Conv2D(1024, kernel_size=(3, 3), activation='relu', padding='same'))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
     model.add(Flatten())
     model.add(Dense(dense_level, activation='relu'))
     model.add(Dropout(0.5))
@@ -149,8 +164,9 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
 
     predicted = []
 
+    # arg max poichè pr produce un array di valori sui quale trovare il massimo
     for p in pr:
-        predicted.append(p)
+        predicted.append(np.argmax(p))
 
     predicted = np.array(predicted)
 
@@ -161,13 +177,32 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
 
     true = np.array(true)
 
-    cnf_matrix = confusion_matrix(true, predicted)
+    try:
+        cnf_matrix = confusion_matrix(true, predicted)
+        df = pd.DataFrame(cnf_matrix)
+        df.to_excel(final_dest + "/" + "cm" + ".xls")
+    except:
+        pass
 
-    c = cohen_kappa_score(predicted, true)
 
-    acc = accuracy_score(true, predicted)
+    try:
+        c = cohen_kappa_score(predicted, true)
+    except:
+        pass
 
-    parameters = {"cohen": c, "acc": acc}
+    try:
+        acc = accuracy_score(true, predicted)
+    except:
+        pass
+
+
+    try:
+        parameters = {"cohen": c, "acc": acc}
+        df = pd.DataFrame(list(parameters.items()), columns=["cohen", "acc"])
+        df.to_excel(final_dest + "/" + "parameters" + ".xls")
+    except:
+        pass
+
 
     df = pd.DataFrame(predicted)
     df.to_excel(final_dest + "/" + "test_predicted" + ".xls")
@@ -175,11 +210,6 @@ def run(epoch, size, batch_size, data_path, results_path, dense_level):
     df = pd.DataFrame(true)
     df.to_excel(final_dest + "/" + "test_true" + ".xls")
 
-    df = pd.DataFrame(list(parameters.items()), columns=["cohen", "acc"])
-    df.to_excel(final_dest + "/" + "parameters" + ".xls")
-
-    df = pd.DataFrame(cnf_matrix)
-    df.to_excel(final_dest + "/" + "cm" + ".xls")
 
     metadata = [target_size[0], num_epochs, batch_size]
 
